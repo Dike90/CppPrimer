@@ -70,4 +70,20 @@ StrVec &StrVec::operator=(const StrVec &rhs ){
     return *this;
 }
 
+void StrVec::reallocate(){
+    //分配当前大小两倍的内存空间
+    auto newcapacity = size() ? 2*size() : 1;
+    //分配新空间
+    auto newdata = alloc.allocate(newcapacity); //返回新分配空间的首地址
+    //将数据从旧内存移动到新内存
+    auto dest = newdata;
+    auto elem = elements; //原数据首地址
+    for (size_t i=0; i != size() ; i++)
+        alloc.construct(dest++ , std::move(*elem++));
+    free();
+    elements = newdata;
+    first_free = dest;
+    cap = elements + newcapacity;
+}
+
 #endif
