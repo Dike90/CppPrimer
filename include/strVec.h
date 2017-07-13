@@ -5,7 +5,8 @@ public:
     StrVec() : elements(nullptr),first_free(nullptr),cap(nullptr) {};
     StrVec(const StrVec&); //拷贝赋值函数
     StrVec(StrVec &&) noexcept; //移动赋值函数
-    StrVec &operator=(const StrVec&); //移动赋值运算符
+    StrVec &operator=(const StrVec&); //拷贝赋值运算符
+    StrVec &operator=(StrVec&&) noexcept; //移动赋值运算符
     ~StrVec();
     void push_back(const std::string&);
     size_t size() const {return first_free - elements;}
@@ -35,7 +36,7 @@ void StrVec::push_back(const string & s){
 pair<string*, string*>
 StrVec::alloc_n_copy(const string *b,const string *e){
     auto data = alloc.allocator(e - b);//返回分配的首地址
-    return {data , uninitialized_copy(b,e,data)}; //return {begin,end};
+    return {data , uninitialized_copy(b,e,data)}; // 从[b,e)拷贝到data所指空间,返回一个尾后迭代器
 }
 
 void StrVec::free(){
@@ -67,6 +68,20 @@ StrVec &StrVec::operator=(const StrVec &rhs ){
     free();
     elements = data.first;
     first_free = cap = data.second;
+    return *this;
+}
+
+StrVec &StrVec::operator=(StrVec &&rhs) noexcept {
+    //检测是否是自赋值
+    if (this != &rhs){
+        free(); //释放左侧运算对象的空间
+        //从rhs接管资源
+        elements = rhs.elements;
+        first_free = rhs.first_free;
+        cap = rhs.cap;
+        //将rhs至于可析构状态
+        rhs.elements = rhs.first_free = rhs.cap = nullptr;
+    }
     return *this;
 }
 
