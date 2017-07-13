@@ -4,7 +4,7 @@ class StrVec {
 public:
     StrVec() : elements(nullptr),first_free(nullptr),cap(nullptr) {};
     StrVec(const StrVec&); //拷贝赋值函数
-    StrVec(StrVec &&); //移动赋值函数
+    StrVec(StrVec &&) noexcept; //移动赋值函数
     StrVec &operator=(const StrVec&); //移动赋值运算符
     ~StrVec();
     void push_back(const std::string&);
