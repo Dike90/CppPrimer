@@ -3,8 +3,9 @@
 class StrVec {
 public:
     StrVec() : elements(nullptr),first_free(nullptr),cap(nullptr) {};
-    StrVec(const StrVec&);
-    StrVec &operator=(const StrVec&);
+    StrVec(const StrVec&); //拷贝赋值函数
+    StrVec(StrVec &&); //移动赋值函数
+    StrVec &operator=(const StrVec&); //移动赋值运算符
     ~StrVec();
     void push_back(const std::string&);
     size_t size() const {return first_free - elements;}
@@ -49,6 +50,14 @@ StrVec::StrVec(const StrVec &s){
     auto newdata = alloc_n_copy(s.begin(),s.end());
     elements = newdata.first;
     first_free = cap = newdata.second;
+}
+
+StrVec::StrVec(StrVec &&s) noexcept // 移动操作不应抛出任何异常
+//成员初始化器接管s中的资源
+    : elements(s.elements) , first_free(s.first_free) ,cap(s.cap) {
+    //令s进入这样一种状态--对其运行析构函数是安全的
+    s.elements = s.first_free = s.cap = nullptr;
+
 }
 
 StrVec::~StrVec() { free(); }
