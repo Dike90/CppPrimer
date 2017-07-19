@@ -7,6 +7,7 @@ public:
     StrVec(StrVec &&) noexcept; //移动赋值函数
     StrVec &operator=(const StrVec&); //拷贝赋值运算符
     StrVec &operator=(StrVec&&) noexcept; //移动赋值运算符
+    StrVec &operator=(std::initializer_list<std::string>);
     ~StrVec();
     void push_back(const std::string&);
     size_t size() const {return first_free - elements;}
@@ -85,6 +86,13 @@ StrVec &StrVec::operator=(StrVec &&rhs) noexcept {
     return *this;
 }
 
+StrVec &StrVec::operator=(std::initializer_list<std::string> il){
+    auto data = alloc_n_copy(il.begin(),il.end());
+    free();
+    elements = data.first;
+    first_free = cap = data.second;
+    return *this;
+}
 void StrVec::reallocate(){
     //分配当前大小两倍的内存空间
     auto newcapacity = size() ? 2*size() : 1;
