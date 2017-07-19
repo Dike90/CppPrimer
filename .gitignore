@@ -34,3 +34,4 @@ GTAGS
 *.app
 /build
 /algs4-data
+/.vscode
