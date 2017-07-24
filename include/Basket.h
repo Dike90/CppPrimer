@@ -2,6 +2,7 @@
 #define __BASKET_H__
 #include<memory>
 #include<set>
+#include"Quote.h"
 
 
 class Basket {
@@ -12,6 +13,10 @@ public:
     }
     //打印每本书的总价和购物篮中所有书的价格
     double total_receipt(std::ostream&) const;
+    void add_item(const Quote& sale)
+        { items.insert(std::shared_ptr<Quote>(sale.clone())); }
+    void add_item(Quote&& sale)
+        { items.insert(std::shared_ptr<Quote>(std::move(sale).clone()));}
 private:
     //该函数用于比较shared_ptr,multiset成员会用到它
     static bool compare(const std::shared_ptr<Quote> &lhs, const std::shared_ptr<Quote> &rhs)
@@ -24,7 +29,7 @@ private:
         items{compare};
 
 };
-Basket::total_receipt(std::ostream &os) const
+double Basket::total_receipt(std::ostream &os) const
 {
     double sum = 0.0; //保存实时计算出的总价格
     //iter指向ISBN相同的一批元素的第一个
@@ -34,7 +39,7 @@ Basket::total_receipt(std::ostream &os) const
         //打印该书籍对应的项目
         sum += print_total(os,**iter , items.count(*iter));
     }
-    os<<"Total Sale: "<<sum << endl;
+    os<<"Total Sale: "<<sum << std::endl;
     return sum;
 }
 

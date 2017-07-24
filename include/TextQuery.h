@@ -14,17 +14,20 @@ class QueryResult{
     //using namespace std;
     friend ostream& print(ostream&, const QueryResult&);
 public:
+    
     QueryResult(string s, shared_ptr<set<line_no>> p , shared_ptr<vector<string>> f): sought(s),lines(p),file(f){};
+    
 private:
     string sought;//查询单词
     shared_ptr<set<line_no>> lines;//出现的行号
     shared_ptr<vector<string>> file;//输入文本
 
 };
+
 class TextQuery{
     
 public:
-    
+
     TextQuery(ifstream&);
     QueryResult query(const string&) const;
 private:
